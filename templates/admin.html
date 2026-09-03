@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AI Phishing Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <div>
+                <h1>📊 System Admin Dashboard</h1>
+                <p>AI Phishing Detection Intelligence</p>
+            </div>
+            <a href="{{ url_for('home') }}" class="btn-secondary">Back to Scanner</a>
+        </header>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <p class="stat-number">{{ total_users }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Scans Processed</h3>
+                <p class="stat-number">{{ total_scans }}</p>
+            </div>
+            <div class="stat-card alert-stat">
+                <h3>Threats Blocked</h3>
+                <p class="stat-number">{{ threats_blocked }}</p>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Chart Section -->
+            <div class="chart-section">
+                <h2>Threat Classification Ratio</h2>
+                <canvas id="threatChart"></canvas>
+            </div>
+
+            <!-- Recent Scans Table -->
+            <div class="table-section">
+                <h2>Live Scan Feed</h2>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Type</th>
+                            <th>Result</th>
+                            <th>Confidence</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for scan in recent_scans %}
+                        <tr>
+                            <td>{{ scan[0] }}</td>
+                            <td style="text-transform: uppercase;">{{ scan[1] }}</td>
+                            <td>
+                                {% if scan[2] == 'Safe' or scan[2] == 'Ham' %}
+                                    <span class="badge-small safe">SAFE</span>
+                                {% elif scan[2] == 'Spam' %}
+                                    <span class="badge-small spam">SPAM</span>
+                                {% else %}
+                                    <span class="badge-small phishing">PHISH</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ scan[3] }}%</td>
+                            <td class="time-col">{{ scan[4] }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align: center;">No scans recorded yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js Logic -->
+    <script>
+        const ctx = document.getElementById('threatChart').getContext('2d');
+        const rawData = {{ chart_data | tojson }};
+        
+        // Standardize labels mapping
+        const safeCount = (rawData['Safe'] || 0) + (rawData['Ham'] || 0);
+        const spamCount = (rawData['Spam'] || 0);
+        const phishingCount = (rawData['Phishing'] || 0);
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Safe / Ham', 'Spam', 'Phishing'],
+                datasets: [{
+                    data: [safeCount, spamCount, phishingCount],
+                    backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#cbd5e1' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

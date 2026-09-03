@@ -1,0 +1,7 @@
+.venv/
+venv/
+colab/
+google colab/
+dataset.csv
+users.db
+__pycache__/

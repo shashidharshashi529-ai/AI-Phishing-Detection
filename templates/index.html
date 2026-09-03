@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Phishing Detection - Threat & Scam Intelligence</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Top Professional Navbar -->
+    <nav class="navbar">
+        <div class="nav-brand">🛡️ <span>AI Phishing Detection</span></div>
+        <div class="nav-menu">
+            <a href="#tools">Threat Scanners</a>
+            <a href="#info-section">Detection Tech</a>
+            <a href="/admin">Admin Hub</a>
+        </div>
+        <div class="nav-auth">
+            {% if user_name %}
+                <span class="welcome-text">Hi, <strong>{{ user_name }}</strong></span>
+                <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn-login">Log in</a>
+                <a href="{{ url_for('signup') }}" class="btn-signup">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Hero Header / Specific Focus -->
+    <header class="hero-header">
+        <h1>AI Phishing Detector for Emails, Links & Text Messages.<br>Safe or Malicious?</h1>
+        <p>Advanced deep learning protection to instantly analyze AI-generated phishing emails, malicious web URLs, and fraudulent SMS messages.</p>
+    </header>
+
+    <!-- Main Tool Interface Container -->
+    <main class="main-container" id="tools">
+        <!-- Navigation Sub-Tabs -->
+        <div class="tool-tabs">
+            <button class="tab-btn active" onclick="switchTab('email')">📧 Email Phishing</button>
+            <button class="tab-btn" onclick="switchTab('sms')">💬 Text Messages (SMS)</button>
+            <button class="tab-btn" onclick="switchTab('link')">🔗 Malicious Links</button>
+            <button class="tab-btn" onclick="switchTab('qr')">📷 QR Code Scanner</button>
+        </div>
+
+        <!-- Scanner Card -->
+        <div class="scanner-card">
+            <!-- Email Section -->
+            <section id="email-section" class="tab-content active">
+                <div class="section-info">
+                    <h2>AI Email Phishing & Spam Detector</h2>
+                    <p>Detect social engineering, executive impersonation, and zero-day email phishing attacks using context-aware NLP models.</p>
+                </div>
+                <div class="input-group">
+                    <textarea id="email-input" placeholder="Paste full email header or content here..."></textarea>
+                </div>
+                <button class="analyze-btn" onclick="analyzeThreat('email')">Analyze Email Now</button>
+            </section>
+
+            <!-- SMS Section -->
+            <section id="sms-section" class="tab-content">
+                <div class="section-info">
+                    <h2>Text Message (SMS) Scam Detector</h2>
+                    <p>Uncover smishing attempts, fraudulent delivery alerts, fake banking notifications, and urgent financial trap texts.</p>
+                </div>
+                <div class="input-group">
+                    <textarea id="sms-input" placeholder="Paste the suspicious text message here..."></textarea>
+                </div>
+                <button class="analyze-btn" onclick="analyzeThreat('sms')">Analyze SMS Now</button>
+            </section>
+
+            <!-- Link Section -->
+            <section id="link-section" class="tab-content">
+                <div class="section-info">
+                    <h2>Malicious Link & URL Scanner</h2>
+                    <p>Examine web links using heuristic pattern matching and threat telemetry to block deceptive domains and credential harvesting pages.</p>
+                </div>
+                <div class="input-group">
+                    <input type="url" id="link-input" placeholder="https://suspicious-domain.com/login">
+                </div>
+                <button class="analyze-btn" onclick="analyzeThreat('link')">Analyze Link Now</button>
+            </section>
+            <!-- QR Code Section -->
+            <section id="qr-section" class="tab-content">
+                <div class="section-info">
+                    <h2>QR Code Phishing (Qrishing) Detector</h2>
+                    <p>Upload a QR code image to decode hidden malicious links or text payloads and scan them for safety threats.</p>
+                </div>
+                <div class="input-group">
+                    <label>Upload QR Code Image (PNG, JPG)</label>
+                    <input type="file" id="qr-file-input" accept="image/*">
+                </div>
+                <button class="analyze-btn" onclick="analyzeQRThreat()">Analyze QR Code</button>
+            </section>
+        </div>
+
+        <!-- Results Display Box -->
+        <div id="result-box" class="result-box hidden">
+            <h3>Analysis Report</h3>
+            <div id="result-badge" class="badge"></div>
+            <p>Confidence Score: <span id="confidence-score"></span>%</p>
+            <div id="email-input-highlight" class="highlight-box"></div>
+            <div id="sms-input-highlight" class="highlight-box"></div>
+        </div>
+    </main>
+
+    <!-- VS Code Style Embedded AI Chatbot Panel -->
+    <div class="vscode-chatbot-container">
+        <div class="vscode-chat-header">
+            <span>🤖 SecureGuard AI Assistant (Workspace Chat)</span>
+            <span class="chat-status">● Live</span>
+        </div>
+        <div class="vscode-chat-body" id="chat-messages">
+            <div class="chat-msg bot">
+                Hello! I am your embedded security copilot. Ask me about email phishing indicators, how to spot SMS smishing, or security analysis rules.
+            </div>
+        </div>
+        <div class="vscode-chat-input-area">
+            <input type="text" id="chat-input" placeholder="Ask AI security assistant... (e.g., 'How to spot fake bank links?')">
+            <button onclick="sendChatMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- Scrollable Informational Section (Updated with Email, Links, and Text Messages) -->
+    <section class="info-scroll-section" id="info-section">
+        <div class="info-container">
+            <h2>Core Threat Detection Vectors</h2>
+            <p class="info-subtitle">Detailed breakdown of what our AI intelligence safeguards against.</p>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>📧 AI Phishing Emails</h3>
+                    <p>Attackers now leverage generative AI to write flawless, personalized scam emails. Our DistilBERT deep learning pipeline detects underlying structural fraud, malicious intent, and spoofed sender semantics.</p>
+                </div>
+                <div class="info-card">
+                    <h3>💬 Text Messages (SMS / Smishing)</h3>
+                    <p>Short message scams often rely on high-urgency triggers like fake parcel deliveries or bank lockouts. Our text analyzer evaluates short-form text patterns to catch trap hooks before you click.</p>
+                </div>
+                <div class="info-card">
+                    <h3>🔗 Malicious Links & URLs</h3>
+                    <p>Links disguised with URL shorteners, deceptive top-level domains, or mismatched anchor text are analyzed instantly using structural heuristics and safety parameters.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 SecureGuard AI Platform. All rights reserved. Major Project Security Intelligence.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
